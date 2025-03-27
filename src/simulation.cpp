@@ -97,24 +97,26 @@ void Simulation::set_initial_conditions() {
 spark::collisions::MCCReactionSet<1, 3> Simulation::load_electron_collisions() {
     // Load electron reactions
     auto electron_reactions = reactions::load_electron_reactions(data_path_, parameters_, ions_);
+
     spark::collisions::ReactionConfig<1, 3> electron_reaction_config{
         parameters_.dt, parameters_.dx,
         std::make_unique<spark::collisions::StaticUniformTarget<1, 3>>(parameters_.ng,
                                                                        parameters_.tg),
         std::move(electron_reactions), spark::collisions::RelativeDynamics::FastProjectile};
 
-    return spark::collisions::MCCReactionSet(electrons_, std::move(electron_reaction_config));
+    return {electrons_, std::move(electron_reaction_config)};
 }
 
 spark::collisions::MCCReactionSet<1, 3> Simulation::load_ion_collisions() {
     // Load ion reactions
     auto ion_reactions = reactions::load_ion_reactions(data_path_, parameters_);
+
     spark::collisions::ReactionConfig<1, 3> ion_reaction_config{
         parameters_.dt, parameters_.dx,
         std::make_unique<spark::collisions::StaticUniformTarget<1, 3>>(parameters_.ng,
                                                                        parameters_.tg),
         std::move(ion_reactions), spark::collisions::RelativeDynamics::SlowProjectile};
 
-    return spark::collisions::MCCReactionSet(ions_, std::move(ion_reaction_config));
+    return {ions_, std::move(ion_reaction_config)};
 }
 }  // namespace ccp
